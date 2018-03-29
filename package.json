@@ -1,0 +1,27 @@
+{
+  "name": "clementine-powermate-remote",
+  "version": "1.0.0",
+  "description": "Remote for Clementine using a Griffin Powermate",
+  "main": "index.js",
+  "scripts": {},
+  "author": "Ivo Janssen",
+  "keywords": [
+    "clementine",
+    "powermate",
+    "remote",
+    "remote control",
+    "player control"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/foxxyz/clementine-powermate-remote.git"
+  },
+  "homepage": "https://github.com/foxxyz/clementine-powermate-remote",
+  "dependencies": {
+    "argparse": "^1.0.10",
+    "clementine-remote": "^0.6.1",
+    "node-powermate": "0.0.5",
+    "paint-console": "0.0.1"
+  }
+}
