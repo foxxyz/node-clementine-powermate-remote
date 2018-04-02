@@ -1,6 +1,6 @@
 {
   "name": "clementine-powermate-remote",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Remote for Clementine using a Griffin Powermate",
   "main": "index.js",
   "scripts": {},
