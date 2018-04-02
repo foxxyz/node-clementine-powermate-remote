@@ -2,7 +2,7 @@
 // Have nice colors for our console logging
 require('paint-console')
 const ArgumentParser = require('argparse').ArgumentParser
-const ClementineClient = require('clementine-remote').Client
+const ClementineClient = require('clementine-client')
 const PowerMate = require('node-powermate')
 const packageInfo = require('./package.json')
 
@@ -23,9 +23,9 @@ class ClementineRemote {
         this.volume = 0
         // How many seconds until reconnecting
         this.reconnectTime = 10
-        // How far to turn the wheel to trigger a track change when 
+        // How far to turn the wheel to trigger a track change when
         // button is down
-        this.trackChangeThreshold = 6
+        this.trackChangeThreshold = 10
         this.trackChangeDelta = 0
         this.trackChanged = false
         // Connect to devices
@@ -55,14 +55,14 @@ class ClementineRemote {
         this.client = new ClementineClient({
             host: this.host,
             port: this.port,
-            auth_code: this.authCode
+            authCode: this.authCode
         })
-        this.client.on('connect', this.connected.bind(this))
+        this.client.on('info', this.connected.bind(this))
         this.client.on('error', this.error.bind(this))
         this.client.on('play', () => this.playing = true)
         this.client.on('volume', (volume) => this.volume = volume)
         this.client.on('song', this.songChanged.bind(this))
-        this.client.on('end', this.disconnected.bind(this))
+        this.client.on('disconnect', this.disconnected.bind(this))
     }
     connectHardware() {
         try {
@@ -80,11 +80,11 @@ class ClementineRemote {
         this.powermate.on('wheelTurn', this.wheelTurn.bind(this))
         this.powermate.on('disconnected', this.disconnectedHardware.bind(this))
     }
-    connected() {
-        console.info('Connected to Clementine!')
+    connected(version) {
+        console.info('Connected to ' + version + '!')
     }
-    disconnected() {
-        console.info("Disconnected from Clementine.")
+    disconnected(reason) {
+        console.info("Disconnected from Clementine (" + reason + ").")
         console.log("Trying to reconnect in " + this.reconnectTime + " seconds...")
         setTimeout(this.connectPlayer.bind(this), this.reconnectTime * 1000)
     }
@@ -105,18 +105,18 @@ class ClementineRemote {
         // Modify volume if button is up
         if (!this.buttonPressed) {
             let volume = Math.max(0, Math.min(100, this.volume + delta))
-            this.client.write({ type: 'SET_VOLUME', request_set_volume: { volume }})
+            this.client.setVolume(volume)
         }
         // Change track if button is down and a minimum delta is met
         else {
             this.trackChangeDelta += delta
-            if (this.trackChangeDelta > 4) {
+            if (this.trackChangeDelta > this.trackChangeThreshold) {
                 console.log("Playing next track")
                 this.client.next()
                 this.trackChanged = true
                 this.trackChangeDelta = 0
             }
-            else if (this.trackChangeDelta < -4) {
+            else if (this.trackChangeDelta < -this.trackChangeThreshold) {
                 console.log("Playing previous track")
                 this.client.previous()
                 this.trackChanged = true

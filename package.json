@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {},
   "author": "Ivo Janssen",
+  "bin": "./index.js",
   "keywords": [
     "clementine",
     "powermate",
@@ -20,7 +21,7 @@
   "homepage": "https://github.com/foxxyz/clementine-powermate-remote",
   "dependencies": {
     "argparse": "^1.0.10",
-    "clementine-remote": "^0.6.1",
+    "clementine-client": "^0.8.1",
     "node-powermate": "0.0.5",
     "paint-console": "0.0.1"
   }
