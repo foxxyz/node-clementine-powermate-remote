@@ -3,7 +3,7 @@
 require('paint-console')
 const ArgumentParser = require('argparse').ArgumentParser
 const ClementineClient = require('clementine-client')
-const PowerMate = require('node-powermate')
+const PowerMate = require('node-hid/src/powermate').PowerMate
 const packageInfo = require('./package.json')
 
 // Parse arguments
@@ -35,11 +35,11 @@ class ClementineRemote {
     // Button click does play/pause if wheel is not moved
     // otherwise, track next/prev
     buttonDown() {
-        this.powermate.setBrightness(0)
+        this.setLED(0)
         this.buttonPressed = true
     }
     buttonUp() {
-        this.powermate.setBrightness(255)
+        this.setLED(Math.round(this.volume * 2.55))
         if (this.trackChanged) {
             this.trackChanged = false
             this.trackChangeDelta = 0
@@ -60,7 +60,11 @@ class ClementineRemote {
         this.client.on('info', this.connected.bind(this))
         this.client.on('error', this.error.bind(this))
         this.client.on('play', () => this.playing = true)
-        this.client.on('volume', (volume) => this.volume = volume)
+        this.client.on('volume', (volume) => {
+            this.volume = volume
+            // Show volume with LED
+            this.setLED(Math.round(volume * 2.55))
+        })
         this.client.on('song', this.songChanged.bind(this))
         this.client.on('disconnect', this.disconnected.bind(this))
     }
@@ -74,10 +78,10 @@ class ClementineRemote {
             return
         }
         console.info("Connected to Powermate!")
-        this.powermate.setBrightness(255)
+        this.setLED(255)
         this.powermate.on('buttonDown', this.buttonDown.bind(this))
         this.powermate.on('buttonUp', this.buttonUp.bind(this))
-        this.powermate.on('wheelTurn', this.wheelTurn.bind(this))
+        this.powermate.on('turn', this.wheelTurn.bind(this))
         this.powermate.on('disconnected', this.disconnectedHardware.bind(this))
     }
     connected(version) {
@@ -100,6 +104,10 @@ class ClementineRemote {
     songChanged(song) {
         if (!song.title) return
         console.info("Now playing: " + song.artist + ": " + song.title)
+    }
+    setLED(brightness) {
+        let featureReport = [0, 0x41, 1, 0x01, 0 ,brightness, 0, 0, 0]
+        this.powermate.hid.sendFeatureReport(featureReport)
     }
     wheelTurn(delta) {
         // Modify volume if button is up
