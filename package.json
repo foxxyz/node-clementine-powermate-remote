@@ -21,7 +21,7 @@
   "homepage": "https://github.com/foxxyz/clementine-powermate-remote",
   "dependencies": {
     "argparse": "^1.0.10",
-    "clementine-client": "^0.9.0",
+    "clementine-client": "^0.9.1",
     "node-hid": "^0.7.2",
     "paint-console": "0.0.1"
   }
