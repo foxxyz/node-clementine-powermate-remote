@@ -107,7 +107,7 @@ class ClementineRemote {
     }
     setLED(brightness) {
         let featureReport = [0, 0x41, 1, 0x01, 0 ,brightness, 0, 0, 0]
-        this.powermate.hid.sendFeatureReport(featureReport)
+        if (this.powermate) this.powermate.hid.sendFeatureReport(featureReport)
     }
     wheelTurn(delta) {
         // Modify volume if button is up
