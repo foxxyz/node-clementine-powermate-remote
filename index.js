@@ -7,11 +7,12 @@ const PowerMate = require('node-hid/src/powermate').PowerMate
 const packageInfo = require('./package.json')
 
 // Parse arguments
-var parser = new ArgumentParser({ version: packageInfo.version, addHelp: true, description: packageInfo.description })
-parser.addArgument(['-t', '--host'], { help: 'Clementine Host (default: 127.0.0.1)', defaultValue: '127.0.0.1' })
-parser.addArgument(['-p', '--port'], { help: 'Clementine Port (default: 5500)', defaultValue: 5500 })
-parser.addArgument(['-c', '--code'], { help: 'Auth code to use with Clementine (default: 43304)', defaultValue: 43304 })
-var args = parser.parseArgs()
+const parser = new ArgumentParser({ add_help: true, description: packageInfo.description })
+parser.add_argument('-v', '--version', { action: 'version', version: packageInfo.version })
+parser.add_argument('-t', '--host', { help: 'Clementine Host (default: 127.0.0.1)', default: '127.0.0.1' })
+parser.add_argument('-p', '--port', { help: 'Clementine Port (default: 5500)', default: 5500 })
+parser.add_argument('-c', '--code', { help: 'Auth code to use with Clementine (default: 43304)', default: 43304 })
+const args = parser.parse_args()
 
 class ClementineRemote {
     constructor(host, port, authCode) {
@@ -106,8 +107,12 @@ class ClementineRemote {
         console.info(`Now playing: ${song.artist} - ${song.title}`)
     }
     setLED(brightness) {
-        const featureReport = [0, 0x41, 1, 0x01, 0 ,brightness, 0, 0, 0]
-        if (this.powermate) this.powermate.hid.sendFeatureReport(featureReport)
+        const featureReport = [0, 0x41, 1, 0x01, 0, brightness, 0, 0, 0]
+        try {
+            if (this.powermate) this.powermate.hid.sendFeatureReport(featureReport)
+        }
+        // Swallow any feature report send failures
+        catch(e) {}
     }
     wheelTurn(delta) {
         // Modify volume if button is up
