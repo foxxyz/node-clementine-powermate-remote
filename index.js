@@ -46,7 +46,7 @@ class ClementineRemote {
         }
         else {
             this.playing = !this.playing
-            console.log((this.playing ? 'Resuming' : 'Pausing') + ' Playback')
+            console.log(`${this.playing ? 'Resuming' : 'Pausing'} Playback`)
             this.client.playpause()
         }
         this.buttonPressed = false
@@ -73,7 +73,7 @@ class ClementineRemote {
             this.powermate = new PowerMate()
         }
         catch(e) {
-            console.error('Error: ' + e.message + '. Trying to reconnect in ' + this.reconnectTime + ' seconds.')
+            console.error(`Error: ${e.message}. Trying to reconnect in ${this.reconnectTime} seconds.`)
             setTimeout(this.connectHardware.bind(this), this.reconnectTime * 1000)
             return
         }
@@ -88,22 +88,22 @@ class ClementineRemote {
         console.info('Connected to ' + version + '!')
     }
     disconnected(reason) {
-        console.info('Disconnected from Clementine (' + reason + ').')
-        console.log('Trying to reconnect in ' + this.reconnectTime + ' seconds...')
+        console.info(`Disconnected from Clementine (${reason}).`)
+        console.log(`Trying to reconnect in ${this.reconnectTime} seconds...`)
         setTimeout(this.connectPlayer.bind(this), this.reconnectTime * 1000)
     }
     disconnectedHardware() {
         console.info('Disconnected Powermate.')
-        console.log('Trying to reconnect in ' + this.reconnectTime + ' seconds...')
+        console.log(`Trying to reconnect in ${this.reconnectTime} seconds...`)
         setTimeout(this.connectHardware.bind(this), this.reconnectTime * 1000)
     }
     error(msg) {
-        console.error('Error: ' + msg + '. Reconnecting in ' + this.reconnectTime + ' seconds...')
+        console.error(`Error: ${msg}. Reconnecting in ${this.reconnectTime} seconds...`)
         setTimeout(this.connectPlayer.bind(this), this.reconnectTime * 1000)   
     }
     songChanged(song) {
         if (!song.title) return
-        console.info('Now playing: ' + song.artist + ': ' + song.title)
+        console.info(`Now playing: ${song.artist} - ${song.title}`)
     }
     setLED(brightness) {
         const featureReport = [0, 0x41, 1, 0x01, 0 ,brightness, 0, 0, 0]
