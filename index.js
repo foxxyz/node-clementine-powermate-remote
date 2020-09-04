@@ -8,9 +8,9 @@ const packageInfo = require('./package.json')
 
 // Parse arguments
 var parser = new ArgumentParser({ version: packageInfo.version, addHelp: true, description: packageInfo.description })
-parser.addArgument(['-t', '--host'], { help: 'Clementine Host (default: 127.0.0.1)', defaultValue: '127.0.0.1'})
-parser.addArgument(['-p', '--port'], { help: 'Clementine Port (default: 5500)', defaultValue: 5500})
-parser.addArgument(['-c', '--code'], { help: 'Auth code to use with Clementine (default: 43304)', defaultValue: 43304})
+parser.addArgument(['-t', '--host'], { help: 'Clementine Host (default: 127.0.0.1)', defaultValue: '127.0.0.1' })
+parser.addArgument(['-p', '--port'], { help: 'Clementine Port (default: 5500)', defaultValue: 5500 })
+parser.addArgument(['-c', '--code'], { help: 'Auth code to use with Clementine (default: 43304)', defaultValue: 43304 })
 var args = parser.parseArgs()
 
 class ClementineRemote {
@@ -46,7 +46,7 @@ class ClementineRemote {
         }
         else {
             this.playing = !this.playing
-            console.log((this.playing ? "Resuming" : "Pausing") + " Playback")
+            console.log((this.playing ? 'Resuming' : 'Pausing') + ' Playback')
             this.client.playpause()
         }
         this.buttonPressed = false
@@ -73,11 +73,11 @@ class ClementineRemote {
             this.powermate = new PowerMate()
         }
         catch(e) {
-            console.error("Error: " + e.message + ". Trying to reconnect in " + this.reconnectTime + " seconds.")
+            console.error('Error: ' + e.message + '. Trying to reconnect in ' + this.reconnectTime + ' seconds.')
             setTimeout(this.connectHardware.bind(this), this.reconnectTime * 1000)
             return
         }
-        console.info("Connected to Powermate!")
+        console.info('Connected to Powermate!')
         this.setLED(255)
         this.powermate.on('buttonDown', this.buttonDown.bind(this))
         this.powermate.on('buttonUp', this.buttonUp.bind(this))
@@ -88,44 +88,44 @@ class ClementineRemote {
         console.info('Connected to ' + version + '!')
     }
     disconnected(reason) {
-        console.info("Disconnected from Clementine (" + reason + ").")
-        console.log("Trying to reconnect in " + this.reconnectTime + " seconds...")
+        console.info('Disconnected from Clementine (' + reason + ').')
+        console.log('Trying to reconnect in ' + this.reconnectTime + ' seconds...')
         setTimeout(this.connectPlayer.bind(this), this.reconnectTime * 1000)
     }
     disconnectedHardware() {
-        console.info("Disconnected Powermate.")
-        console.log("Trying to reconnect in " + this.reconnectTime + " seconds...")
+        console.info('Disconnected Powermate.')
+        console.log('Trying to reconnect in ' + this.reconnectTime + ' seconds...')
         setTimeout(this.connectHardware.bind(this), this.reconnectTime * 1000)
     }
     error(msg) {
-        console.error("Error: " + msg + ". Reconnecting in " + this.reconnectTime + " seconds...")
+        console.error('Error: ' + msg + '. Reconnecting in ' + this.reconnectTime + ' seconds...')
         setTimeout(this.connectPlayer.bind(this), this.reconnectTime * 1000)   
     }
     songChanged(song) {
         if (!song.title) return
-        console.info("Now playing: " + song.artist + ": " + song.title)
+        console.info('Now playing: ' + song.artist + ': ' + song.title)
     }
     setLED(brightness) {
-        let featureReport = [0, 0x41, 1, 0x01, 0 ,brightness, 0, 0, 0]
+        const featureReport = [0, 0x41, 1, 0x01, 0 ,brightness, 0, 0, 0]
         if (this.powermate) this.powermate.hid.sendFeatureReport(featureReport)
     }
     wheelTurn(delta) {
         // Modify volume if button is up
         if (!this.buttonPressed) {
-            let volume = Math.max(0, Math.min(100, this.volume + delta))
+            const volume = Math.max(0, Math.min(100, this.volume + delta))
             this.client.setVolume(volume)
         }
         // Change track if button is down and a minimum delta is met
         else {
             this.trackChangeDelta += delta
             if (this.trackChangeDelta > this.trackChangeThreshold) {
-                console.log("Playing next track")
+                console.log('Playing next track')
                 this.client.next()
                 this.trackChanged = true
                 this.trackChangeDelta = 0
             }
             else if (this.trackChangeDelta < -this.trackChangeThreshold) {
-                console.log("Playing previous track")
+                console.log('Playing previous track')
                 this.client.previous()
                 this.trackChanged = true
                 this.trackChangeDelta = 0
@@ -134,4 +134,4 @@ class ClementineRemote {
     }
 }
 
-const remote = new ClementineRemote(args.host, args.port, args.code)
+new ClementineRemote(args.host, args.port, args.code)
