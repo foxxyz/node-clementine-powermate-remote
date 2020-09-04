@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Have nice colors for our console logging
-require('paint-console')
+require('fresh-console')
 const ArgumentParser = require('argparse').ArgumentParser
 const ClementineClient = require('clementine-client')
 const PowerMate = require('node-hid/src/powermate').PowerMate
