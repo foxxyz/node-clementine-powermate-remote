@@ -10,6 +10,9 @@
   "bin": {
     "clementine-powermate-remote": "index.js"
   },
+  "files": [
+    "index.js"
+  ],
   "keywords": [
     "clementine",
     "powermate",
