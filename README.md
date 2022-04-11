@@ -1,7 +1,7 @@
 Griffin Powermate Remote Control for Clementine 🍊
 ==================================================
 
-Node-based remote control for the [Clementine music player](https://www.clementine-player.org/) using a [Griffin Powermate](https://griffin.zendesk.com/hc/en-us/articles/206445584-PowerMate-USB)
+Node-based remote control for the [Clementine music player](https://www.clementine-player.org/) using a [Griffin Powermate](https://en.wikipedia.org/wiki/Griffin_PowerMate) (unfortunately discontinued)
 
  * Rotate wheel: Volume control
  * Button press: Plays/pauses currently playing track
