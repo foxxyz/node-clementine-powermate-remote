@@ -29,11 +29,11 @@
   "dependencies": {
     "argparse": "^2.0.1",
     "clementine-client": "^1.0.3",
-    "fresh-console": "^1.0.2",
+    "fresh-console": "^1.0.3",
     "node-hid": "^2.1.1"
   },
   "devDependencies": {
-    "eslint": "^7.31.0"
+    "eslint": "^8.13.0"
   },
   "eslintConfig": {
     "env": {
