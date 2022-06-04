@@ -28,12 +28,12 @@
   "homepage": "https://github.com/foxxyz/clementine-powermate-remote",
   "dependencies": {
     "argparse": "^2.0.1",
-    "clementine-client": "^1.0.3",
+    "clementine-client": "^1.0.4",
     "fresh-console": "^1.0.3",
     "node-hid": "^2.1.1"
   },
   "devDependencies": {
-    "eslint": "^8.13.0"
+    "eslint": "^8.17.0"
   },
   "eslintConfig": {
     "env": {
