@@ -7,6 +7,7 @@ const PowerMate = require('node-hid/src/powermate').PowerMate
 const packageInfo = require('./package.json')
 
 // Parse arguments
+// eslint-disable-next-line camelcase
 const parser = new ArgumentParser({ add_help: true, description: packageInfo.description })
 parser.add_argument('-v', '--version', { action: 'version', version: packageInfo.version })
 parser.add_argument('-t', '--host', { help: 'Clementine Host (default: 127.0.0.1)', default: '127.0.0.1' })
@@ -44,10 +45,9 @@ class ClementineRemote {
         if (this.trackChanged) {
             this.trackChanged = false
             this.trackChangeDelta = 0
-        }
-        else {
+        } else {
             this.playing = !this.playing
-            console.log(`${this.playing ? 'Resuming' : 'Pausing'} Playback`)
+            console.info(`${this.playing ? 'Resuming' : 'Pausing'} Playback`)
             this.client.playpause()
         }
         this.buttonPressed = false
@@ -61,7 +61,7 @@ class ClementineRemote {
         this.client.on('info', this.connected.bind(this))
         this.client.on('error', this.error.bind(this))
         this.client.on('play', () => this.playing = true)
-        this.client.on('volume', (volume) => {
+        this.client.on('volume', volume => {
             this.volume = volume
             // Show volume with LED
             this.setLED(Math.round(volume * 2.55))
@@ -72,8 +72,7 @@ class ClementineRemote {
     connectHardware() {
         try {
             this.powermate = new PowerMate()
-        }
-        catch(e) {
+        } catch (e) {
             console.error(`Error: ${e.message}. Trying to reconnect in ${this.reconnectTime} seconds.`)
             setTimeout(this.connectHardware.bind(this), this.reconnectTime * 1000)
             return
@@ -85,23 +84,25 @@ class ClementineRemote {
         this.powermate.on('turn', this.wheelTurn.bind(this))
         this.powermate.on('disconnected', this.disconnectedHardware.bind(this))
     }
+    // eslint-disable-next-line class-methods-use-this
     connected(version) {
-        console.info('Connected to ' + version + '!')
+        console.info(`Connected to ${version}!`)
     }
     disconnected(reason) {
         console.info(`Disconnected from Clementine (${reason}).`)
-        console.log(`Trying to reconnect in ${this.reconnectTime} seconds...`)
+        console.info(`Trying to reconnect in ${this.reconnectTime} seconds...`)
         setTimeout(this.connectPlayer.bind(this), this.reconnectTime * 1000)
     }
     disconnectedHardware() {
         console.info('Disconnected Powermate.')
-        console.log(`Trying to reconnect in ${this.reconnectTime} seconds...`)
+        console.info(`Trying to reconnect in ${this.reconnectTime} seconds...`)
         setTimeout(this.connectHardware.bind(this), this.reconnectTime * 1000)
     }
     error(msg) {
         console.error(`Error: ${msg}. Reconnecting in ${this.reconnectTime} seconds...`)
-        setTimeout(this.connectPlayer.bind(this), this.reconnectTime * 1000)   
+        setTimeout(this.connectPlayer.bind(this), this.reconnectTime * 1000)
     }
+    // eslint-disable-next-line class-methods-use-this
     songChanged(song) {
         if (!song.title) return
         console.info(`Now playing: ${song.artist} - ${song.title}`)
@@ -110,27 +111,25 @@ class ClementineRemote {
         const featureReport = [0, 0x41, 1, 0x01, 0, brightness, 0, 0, 0]
         try {
             if (this.powermate) this.powermate.hid.sendFeatureReport(featureReport)
+        } catch (e) {
+            // Swallow any feature report send failures
         }
-        // Swallow any feature report send failures
-        catch(e) {}
     }
     wheelTurn(delta) {
         // Modify volume if button is up
         if (!this.buttonPressed) {
             const volume = Math.max(0, Math.min(100, this.volume + delta))
             this.client.setVolume(volume)
-        }
         // Change track if button is down and a minimum delta is met
-        else {
+        } else {
             this.trackChangeDelta += delta
             if (this.trackChangeDelta > this.trackChangeThreshold) {
-                console.log('Playing next track')
+                console.info('Playing next track')
                 this.client.next()
                 this.trackChanged = true
                 this.trackChangeDelta = 0
-            }
-            else if (this.trackChangeDelta < -this.trackChangeThreshold) {
-                console.log('Playing previous track')
+            } else if (this.trackChangeDelta < -this.trackChangeThreshold) {
+                console.info('Playing previous track')
                 this.client.previous()
                 this.trackChanged = true
                 this.trackChangeDelta = 0

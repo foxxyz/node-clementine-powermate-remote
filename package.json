@@ -33,58 +33,12 @@
     "node-hid": "^2.1.2"
   },
   "devDependencies": {
+    "@appliedminds/eslint-config": "^1.5.0",
     "eslint": "^8.36.0"
   },
   "eslintConfig": {
-    "env": {
-      "es6": true,
-      "node": true
-    },
     "extends": [
-      "eslint:recommended"
-    ],
-    "parserOptions": {
-      "ecmaVersion": 2019,
-      "sourceType": "module"
-    },
-    "rules": {
-      "eqeqeq": [
-        "error",
-        "always"
-      ],
-      "indent": [
-        "error",
-        4
-      ],
-      "linebreak-style": [
-        "error",
-        "unix"
-      ],
-      "quotes": [
-        "error",
-        "single"
-      ],
-      "no-console": [
-        "error",
-        {
-          "allow": [
-            "warn",
-            "info",
-            "error"
-          ]
-        }
-      ],
-      "object-curly-spacing": [
-        "error",
-        "always"
-      ],
-      "prefer-const": [
-        "error"
-      ],
-      "semi": [
-        "error",
-        "never"
-      ]
-    }
+      "@appliedminds"
+    ]
   }
 }
